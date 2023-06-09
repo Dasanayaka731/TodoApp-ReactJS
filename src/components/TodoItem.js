@@ -1,0 +1,88 @@
+import React, { useState } from "react";
+import "../css/TodoItem.css";
+import { PencilIcon, TrashIcon } from "@heroicons/react/outline";
+
+export default function TodoItem({ todo, index, todos, setTodos }) {
+  const [isEdit, setEdit] = useState(false);
+  const [editTodoName, setEditTodoName] = useState("");
+  const handleDelete = () => {
+    const newTodos = todos.filter((item) => {
+      if (todo.id === item.id) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+    setTodos(newTodos);
+  };
+
+  const handleEdit = () => {
+    setEdit(!isEdit);
+    setEditTodoName(todo.name);
+  };
+  const handleSubmit = (e) => {
+    console.log(e);
+    if (e.keyCode === 13) {
+      const newTodos = todos.map((item) => {
+        if (todo.id === item.id) {
+          return {
+            ...item,
+            name: editTodoName,
+          };
+        } else {
+          return item;
+        }
+      });
+      setTodos(newTodos);
+      setEdit(false);
+    }
+  };
+
+  const handleComplete = () => {
+    const newTodos = todos.map((item) => {
+      if (todo.id === item.id) {
+        return {
+          ...item,
+          isCompleted: !item.isCompleted,
+        };
+      } else {
+        return item;
+      }
+    });
+    setTodos(newTodos);
+  };
+  return (
+    <div className="todo-item-wrapper">
+      <div className="todo-item-text">
+        <div>{index}.</div>
+        {isEdit ? (
+          <input
+            value={editTodoName}
+            type="text"
+            onChange={(e) => {
+              setEditTodoName(e.target.value);
+            }}
+            onKeyDown={handleSubmit}
+          />
+        ) : (
+          <div
+            onClick={handleComplete}
+            style={{
+              textDecorationLine: todo.isCompleted ? "line-through" : "none",
+            }}
+          >
+            {todo.name}
+          </div>
+        )}
+      </div>
+      <div className="todo-item-buttons">
+        <button className="pencil-button" onClick={handleEdit}>
+          <PencilIcon />
+        </button>
+        <button className="trash-button" onClick={handleDelete}>
+          <TrashIcon />
+        </button>
+      </div>
+    </div>
+  );
+}
